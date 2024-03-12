@@ -4,21 +4,21 @@ import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
 
 import { text, integer, sqliteTable } from 'drizzle-orm/sqlite-core';
 
-const sqlite = new Database('sqlite.db');
+const sqlite = new Database('db.sqlite');
 export const db = drizzle(sqlite);
 
-const userTable = sqliteTable("user", {
+export const users = sqliteTable("user", {
 	id: text("id").notNull().primaryKey(),
      username: text('username').notNull().unique(),
      hashed_password: text('hashed_password').notNull(),
 });
 
-const sessionTable = sqliteTable("session", {
+export const session = sqliteTable("session", {
 	id: text("id").notNull().primaryKey(),
 	userId: text("user_id")
 		.notNull()
-		.references(() => userTable.id),
+		.references(() => users.id),
 	expiresAt: integer("expires_at").notNull()
 });
 
-export const adapter = new DrizzleSQLiteAdapter(db, sessionTable, userTable);
+export const adapter = new DrizzleSQLiteAdapter(db, session, users);
