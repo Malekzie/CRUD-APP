@@ -9,7 +9,8 @@ import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
 import { lucia } from '$lib/server/auth';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async (event) => {
+	if (event.locals.user) redirect(302, "/");  
 	return {
 		form: await superValidate(zod(registerSchema)),
 	};
