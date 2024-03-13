@@ -11,7 +11,7 @@
          validators: zodClient(registerSchema),
     })
 
-    const { form: formData, enhance } = form;
+    const { form: formData, enhance, errors } = form;
 </script>
 
 <div class="flex max-w-xl pt-8 mx-auto">
@@ -38,6 +38,7 @@
               </Form.Control>
               <Form.FieldErrors />
          </Form.Field>
+		<Form.Errors errors={$errors._errors}/>
          <Form.Button>Register</Form.Button>
     </form>
 </div>

@@ -30,13 +30,7 @@
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
-		<div class="text-destructive" aria-live="assertive">
-			{#if $errors._errors}
-                    {#each $errors._errors as error}
-                         <p>{error}</p>
-                    {/each}
-			{/if}
-		</div>
+		<Form.Errors errors={$errors._errors}/>
 		<Form.Button>Login</Form.Button>
 	</form>
 </div>

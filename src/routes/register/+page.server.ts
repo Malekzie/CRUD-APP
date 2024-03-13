@@ -3,11 +3,12 @@ import { error, fail, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { db, users } from '$lib/server/db';
+import { users } from '$lib/server/schemas';
 import { eq } from 'drizzle-orm';
 import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
 import { lucia } from '$lib/server/auth';
+import { db } from '$lib/server/db';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) redirect(302, "/");  
@@ -32,7 +33,7 @@ export const actions: Actions = {
 
 		try {
 
-			const userExists = db
+			const userExists = await db
 			.select({ username: users.username })
 			.from(users)
 			.where(eq(users.username, form.data.username))
@@ -45,13 +46,12 @@ export const actions: Actions = {
 		} catch (err) {
 			return error(422, 'Something went wrong with the database.')
 		}
-			
 		try {
 
 			const userId = generateId(15);
 			const hashedPassword = await new Argon2id().hash(form.data.password);
 			
-			const { insertedId } = db
+			const { insertedId } = await db
 			.insert(users)
 			.values({ username: form.data.username, hashed_password: hashedPassword, id: userId })
 			.returning({ insertedId: users.id })

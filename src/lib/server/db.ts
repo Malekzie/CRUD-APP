@@ -8,5 +8,6 @@ const sqlite = new Database('db.sqlite');
 
 export const db = drizzle(sqlite, { schema });
 
+export type Database = typeof db;
 
 export const adapter = new DrizzleSQLiteAdapter(db, schema.session, schema.users);

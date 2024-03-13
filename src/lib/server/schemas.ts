@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { generateId } from "lucia";
 
 export const users = sqliteTable("user", {
 	id: text("id").notNull().primaryKey(),
@@ -15,8 +16,8 @@ export const session = sqliteTable("session", {
 	expiresAt: integer("expires_at").notNull()
 });
 
-export const posts = sqliteTable("post", {
-	id: text('id').notNull().primaryKey(),
+export const posts = sqliteTable("posts", {
+	id: text('id').notNull().primaryKey().$defaultFn(() => generateId(15)),
 	userId: text('user_id').notNull().references(() => users.id),
 	title: text('title').notNull(),
 	content: text('content').notNull()
