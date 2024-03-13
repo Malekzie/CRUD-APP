@@ -1,12 +1,12 @@
-import { loginSchema } from '$lib/schema';
+import { loginSchema } from '$lib/zod-schema';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { db, users } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import { Argon2id } from 'oslo/password';
 import { lucia } from '$lib/server/auth';
+import { users } from '$lib/server/schemas';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) redirect(302, "/");  
@@ -27,7 +27,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const existingUser = await db
+		const existingUser = await event.locals.db
 			.select()
 			.from(users)
 			.where(eq(users.username, username))

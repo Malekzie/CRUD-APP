@@ -1,7 +1,7 @@
 <script lang='ts'>
     import * as Form from '$lib/components/ui/form/index.js'
    import Input from '$lib/components/ui/input/input.svelte';
-   import { registerSchema } from '$lib/schema.js';
+   import { registerSchema } from '$lib/zod-schema.js';
     import { superForm } from 'sveltekit-superforms';
     import { zodClient } from 'sveltekit-superforms/adapters';
 

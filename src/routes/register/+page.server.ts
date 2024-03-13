@@ -1,4 +1,4 @@
-import { registerSchema } from '$lib/schema';
+import { registerSchema } from '$lib/zod-schema';
 import { error, fail, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { setError, superValidate } from 'sveltekit-superforms';

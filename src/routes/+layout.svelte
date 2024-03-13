@@ -8,21 +8,28 @@
 	$page;
 </script>
 
-<div class="w-full max-w-xl mx-auto">
-	<pre>User: {JSON.stringify(data.user, null, 2)}</pre>
-	<div class="flex justify-between items center">
-		<div class="flex items-center max-w-xl gap-4 pt-8">
-			<Button href="/login" variant={$page.url.pathname.includes('login') ? 'outline' : 'ghost'}
-				>Login</Button
-			>
-			<Button
-				href="/register"
-				variant={$page.url.pathname.includes('register') ? 'outline' : 'ghost'}>Register</Button
-			>
+<div class="flex items-center w-full h-16 border-b">
+	<div class="container flex items-center justify-between">
+		<div>
+			<a href="/">Purple</a>
 		</div>
-          <form action="/logout" method="POST">
-               <Button type="submit">Logout</Button>
-          </form>
+			<div class="flex items-center justify-between">
+				{#if !data.session}
+				<div class="flex items-center max-w-xl gap-4">
+					<Button href="/login" variant={$page.url.pathname.includes('login') ? 'outline' : 'ghost'}
+					>Login</Button
+					>
+					<Button
+					href="/register"
+					variant={$page.url.pathname.includes('register') ? 'outline' : 'ghost'}>Register</Button
+					>
+				</div>
+					{:else}
+				<form action="/logout" method="POST">
+					<Button type="submit">Logout</Button>
+				</form>
+				{/if}
+		</div>
 	</div>
 </div>
 <slot />
