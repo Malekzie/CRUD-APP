@@ -2,12 +2,13 @@
 	import { Button } from '$lib/components/ui/button';
 	import '../app.pcss';
 	import { page } from '$app/stores';
+	import { Toaster } from '$lib/components/ui/sonner';
 
 	let { data } = $props();
 
 	$page;
 </script>
-
+<Toaster />
 <div class="flex items-center w-full h-16 border-b">
 	<div class="container flex items-center justify-between">
 		<div>
