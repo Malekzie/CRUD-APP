@@ -11,15 +11,15 @@ export const load: PageServerLoad = async () => {
 	const createPostForm = await superValidate(zod(createPostSchema));
 
 	const posts = await db.query.posts.findMany({
+		orderBy: (posts, { desc}) => [desc(posts.createdAt)],
 		with: {
 			user: {
 				columns: {
-					id: true,
-					username: true
+					username: true,
 				}
 			}
 		}
-	});
+	})
 
 	return {
 		posts,
@@ -33,9 +33,7 @@ export const actions: Actions = {
 		const form = await superValidate(event, zod(createPostSchema));
 
 		if (!form.valid) {
-			return fail(400, {
-				form
-			});
+			return fail(400, { form });
 		}
 		const postId = generateId(15);
 
