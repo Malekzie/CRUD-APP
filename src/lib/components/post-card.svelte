@@ -11,6 +11,7 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { sleep } from '$lib/utils.js';
 	import { toast } from 'svelte-sonner';
+	import { page } from '$app/stores';
 
 	type Props = {
 		post: PostWithUser;
@@ -34,35 +35,41 @@
 		dropdownOpen: false,
 		editDialogOpen: false
 	});
+
+	$page;
 </script>
 
 <Card.Root>
 	<Card.Header class="flex-row items-center justify-between">
-		<Card.Title>{post.title}</Card.Title>
-		<DropdownMenu.Root bind:open={openStates.dropdownOpen}>
-			<DropdownMenu.Trigger class={buttonVariants({ size: 'icon', variant: 'ghost' })}>
-				<EllipsisVertical class="size-4" />
-				<span class="sr-only">Post options</span>
-			</DropdownMenu.Trigger>
-			<DropdownMenu.Content>
-				<DropdownMenu.Item>
-					<SquarePen class="mr-2 size-4" />
-					Edit
-				</DropdownMenu.Item>
-				<DropdownMenu.Item
-					onclick={(e) => {
-						e.preventDefault();
-						openStates.dropdownOpen = false;
-						sleep(2).then(() => {
-							openStates.deleteDialogOpen = true;
-						});
-					}}
-				>
-					<Trash2 class="mr-2 size-4" />
-					Delete
-				</DropdownMenu.Item>
-			</DropdownMenu.Content>
-		</DropdownMenu.Root>
+		<Card.Title>
+			{post.title}
+		</Card.Title>
+		{#if $page.data.user && $page.data.user.id === post.userId}
+			<DropdownMenu.Root bind:open={openStates.dropdownOpen}>
+				<DropdownMenu.Trigger class={buttonVariants({ size: 'icon', variant: 'ghost' })}>
+					<EllipsisVertical class="size-4" />
+					<span class="sr-only">Post options</span>
+				</DropdownMenu.Trigger>
+				<DropdownMenu.Content>
+					<DropdownMenu.Item>
+						<SquarePen class="mr-2 size-4" />
+						Edit
+					</DropdownMenu.Item>
+					<DropdownMenu.Item
+						onclick={(e) => {
+							e.preventDefault();
+							openStates.dropdownOpen = false;
+							sleep(2).then(() => {
+								openStates.deleteDialogOpen = true;
+							});
+						}}
+					>
+						<Trash2 class="mr-2 size-4" />
+						Delete
+					</DropdownMenu.Item>
+				</DropdownMenu.Content>
+			</DropdownMenu.Root>
+		{/if}
 	</Card.Header>
 	<Card.Content>
 		{post.content}
