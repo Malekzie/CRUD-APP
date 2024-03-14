@@ -11,3 +11,5 @@ To replicate, do `pnpm db:push` on the terminal after running `pnpn i` then, to 
 - [Shadcn-Svelte](https://www.shadcn-svelte.com/docs) for simplifying components
 - [Lucide](https://lucide.dev) for Icons
 - [Falso](https://ngneat.github.io/falso/) to populate Database
+- [Sveltekit Superforms](https://superforms.rocks) as the Form Handler
+- [Formsnap](https://formsnap.dev) as an upgraded version of Sveltekit Superforms
