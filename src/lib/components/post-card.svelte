@@ -6,24 +6,42 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { EllipsisVertical, Trash2, SquarePen, Square } from 'lucide-svelte';
 	import { buttonVariants } from './ui/button';
+	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { deletePostSchema } from '$lib/zod-schema';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { sleep } from '$lib/utils.js';
+	import { toast } from 'svelte-sonner';
 
 	type Props = {
 		post: PostWithUser;
+		form: SuperValidated<Infer<typeof deletePostSchema>>;
 	};
+	let { post, form: theForm } = $props<Props>();
 
-	let { post } = $props<Props>();
+	const form = superForm(theForm, {
+		validators: zodClient(deletePostSchema),
+		onUpdated: ({ form: returnForm }) => {
+			if (!returnForm.valid) return toast.error('Error deleting your post!');
+			openStates.deleteDialogOpen = false;
+			toast.success('Post deleted successfully!');
+		}
+	});
 
-	let deleteDialogOpen = $state(false);
+	const { enhance } = form;
 
-	let editDialogOpen = $state(false);
+	const openStates = $state({
+		deleteDialogOpen: false,
+		dropdownOpen: false,
+		editDialogOpen: false
+	});
 </script>
 
 <Card.Root>
 	<Card.Header class="flex-row items-center justify-between">
 		<Card.Title>{post.title}</Card.Title>
-		<DropdownMenu.Root>
+		<DropdownMenu.Root bind:open={openStates.dropdownOpen}>
 			<DropdownMenu.Trigger class={buttonVariants({ size: 'icon', variant: 'ghost' })}>
-				<EllipsisVertical />
+				<EllipsisVertical class="size-4" />
 				<span class="sr-only">Post options</span>
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content>
@@ -31,7 +49,15 @@
 					<SquarePen class="mr-2 size-4" />
 					Edit
 				</DropdownMenu.Item>
-				<DropdownMenu.Item onclick={() => (deleteDialogOpen = true)}>
+				<DropdownMenu.Item
+					onclick={(e) => {
+						e.preventDefault();
+						openStates.dropdownOpen = false;
+						sleep(2).then(() => {
+							openStates.deleteDialogOpen = true;
+						});
+					}}
+				>
 					<Trash2 class="mr-2 size-4" />
 					Delete
 				</DropdownMenu.Item>
@@ -46,17 +72,22 @@
 	</Card.Footer>
 </Card.Root>
 
-<AlertDialog.Root bind:open={deleteDialogOpen}>
-     <AlertDialog.Content>
-
-          <AlertDialog.Header>
-               <AlertDialog.Title>Delete Post</AlertDialog.Title>
-               <AlertDialog.Description>Are you sure you want to delete this post?</AlertDialog.Description>
-          </AlertDialog.Header>
-          
-          <AlertDialog.Footer>
-               <Button tabindex={0} variant="destructive" type="button">Yes, delete.</Button>
-               <Button variant="outline" onclick={() => (deleteDialogOpen = false)}>No, cancel.</Button>
-          </AlertDialog.Footer>
-     </AlertDialog.Content>
+<AlertDialog.Root bind:open={openStates.deleteDialogOpen}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Delete Post</AlertDialog.Title>
+			<AlertDialog.Description>Are you sure you want to delete this post?</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<form use:enhance method="POST" action="?/deletePost&id={post.id}">
+				<Button class={buttonVariants({ variant: 'destructive' })} type="submit">
+					Yes, delete.
+				</Button>
+			</form>
+			<AlertDialog.Cancel
+				class={buttonVariants({ variant: 'outline' })}
+				onclick={() => (openStates.deleteDialogOpen = false)}>No, cancel.</AlertDialog.Cancel
+			>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
 </AlertDialog.Root>
