@@ -1,6 +1,6 @@
-import { Lucia } from "lucia";
-import { dev } from "$app/environment";
-import { adapter } from "./db";
+import { Lucia } from 'lucia';
+import { dev } from '$app/environment';
+import { adapter } from './db';
 
 
 export const lucia = new Lucia(adapter, {
@@ -10,7 +10,7 @@ export const lucia = new Lucia(adapter, {
 			secure: !dev
 		}
 	},
-     getUserAttributes: (attributes) => {
+	getUserAttributes: (attributes) => {
 		return {
 			// attributes has the type of DatabaseUserAttributes
 			username: attributes.username
@@ -18,7 +18,8 @@ export const lucia = new Lucia(adapter, {
 	}
 });
 
-declare module "lucia" {
+
+declare module 'lucia' {
 	interface Register {
 		Lucia: typeof lucia;
 		DatabaseUserAttributes: DatabaseUserAttributes;

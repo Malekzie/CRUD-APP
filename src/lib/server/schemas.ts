@@ -1,4 +1,4 @@
-import { relations, sql } from 'drizzle-orm';
+import { relations, sql, type InferSelectModel } from 'drizzle-orm';
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { generateId } from 'lucia';
 
@@ -53,3 +53,15 @@ export const postRelations = relations(posts, ({ one }) => ({
 		references: [users.id]
 	})
 }));
+
+// Types
+export type User = typeof users.$inferSelect;
+export type Post = typeof posts.$inferSelect;
+
+export type UsersWithPosts = User & {
+	posts: Post[];
+}
+
+export type PostWithUser = Post & {
+	user: Pick<User, 'username'>;
+}
