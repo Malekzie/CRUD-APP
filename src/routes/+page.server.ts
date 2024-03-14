@@ -2,11 +2,12 @@ import { db } from '$lib/server/db';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { PageServerLoad, Actions } from './$types';
 import { setError, superValidate } from 'sveltekit-superforms';
-import { createPostSchema, deletePostSchema } from '$lib/zod-schema';
+import { createPostSchema, deletePostSchema,  } from '$lib/zod-schema';
 import { fail, redirect } from '@sveltejs/kit';
 import { generateId } from 'lucia';
 import { posts } from '$lib/server/schemas';
 import { eq } from 'drizzle-orm';
+import { isUserPostOwner } from '$lib/server/helpers';
 
 export const load: PageServerLoad = async () => {
 	const createPostForm = await superValidate(zod(createPostSchema));
@@ -53,19 +54,9 @@ export const actions: Actions = {
 			return setError(form, '', 'Error deleting Post');
 		}
 
-		const post  = await db.query.posts.findFirst({
-			where: eq(posts.id, form.data.id),
-			with: {
-				user: {
-					columns: {
-						id: true
-					}
-				}
-			}
-		})
-		if (!post || post.userId !== event.locals.user.id)
-		{
+		if(!isUserPostOwner(form.data.id, event.locals.user.id)) {
 			return setError(form, '', 'Post not found');
+
 		}
 
 		await db.delete(posts).where(eq(posts.id, form.data.id));
@@ -74,5 +65,5 @@ export const actions: Actions = {
 			form
 		}
 
-	}
+	},
 };

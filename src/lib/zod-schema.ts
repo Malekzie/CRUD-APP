@@ -27,6 +27,19 @@ export const createPostSchema = z.object({
 		.max(512, 'Content must be at most 512 characters'),
 });
 
+export const updatePostSchema = z.object({
+	id: z.string(),
+	title: z
+		.string()
+		.min(3, 'Title must be at least 3 characters')
+		.max(128, 'Title must be at most 128 characters'),
+	content: z
+		.string()
+		.min(3, 'Content must be at least 3 characters')
+		.max(512, 'Content must be at most 512 characters'),
+});
+
+
 export const deletePostSchema = z.object({
 	id: z.string()
 });
