@@ -12,7 +12,7 @@
 		"format": "prettier --write .",
 		"db:push": "drizzle-kit push:sqlite",
 		"studio": "drizzle-kit studio",
-		"seed": "node ./scripts/seed.ts"
+		"seed": "tsx scripts/seed.ts"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-drizzle": "^1.0.3",
