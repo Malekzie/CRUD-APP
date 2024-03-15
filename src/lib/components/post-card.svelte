@@ -1,17 +1,17 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card';
-	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import { Button } from '$lib/components/ui/button';
-	import type { PostWithUser } from '$lib/server/schemas';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { EllipsisVertical, Trash2, SquarePen, Square } from 'lucide-svelte';
-	import { buttonVariants } from './ui/button';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import { deletePostSchema } from '$lib/zod-schema';
-	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { sleep } from '$lib/utils.js';
-	import { toast } from 'svelte-sonner';
-	import { page } from '$app/stores';
+	import * as Card from "$lib/components/ui/card";
+	import * as AlertDialog from "$lib/components/ui/alert-dialog";
+	import { Button } from "$lib/components/ui/button";
+	import type { PostWithUser } from "$lib/server/schemas";
+	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+	import { EllipsisVertical, Trash2, SquarePen, Square } from "lucide-svelte";
+	import { buttonVariants } from "./ui/button";
+	import { type SuperValidated, type Infer, superForm } from "sveltekit-superforms";
+	import { deletePostSchema } from "$lib/zod-schema";
+	import { zodClient } from "sveltekit-superforms/adapters";
+	import { sleep } from "$lib/utils.js";
+	import { toast } from "svelte-sonner";
+	import { page } from "$app/stores";
 
 	type Props = {
 		post: PostWithUser;
@@ -22,10 +22,10 @@
 	const form = superForm(theForm, {
 		validators: zodClient(deletePostSchema),
 		onUpdated: ({ form: returnForm }) => {
-			if (!returnForm.valid) return toast.error('Error deleting your post!');
+			if (!returnForm.valid) return toast.error("Error deleting your post!");
 			openStates.deleteDialogOpen = false;
-			toast.success('Post deleted successfully!');
-		}
+			toast.success("Post deleted successfully!");
+		},
 	});
 
 	const { enhance } = form;
@@ -33,7 +33,7 @@
 	const openStates = $state({
 		deleteDialogOpen: false,
 		dropdownOpen: false,
-		editDialogOpen: false
+		editDialogOpen: false,
 	});
 
 	$page;
@@ -46,12 +46,12 @@
 		</Card.Title>
 		{#if $page.data.user && $page.data.user.id === post.userId}
 			<DropdownMenu.Root bind:open={openStates.dropdownOpen}>
-				<DropdownMenu.Trigger class={buttonVariants({ size: 'icon', variant: 'ghost' })}>
+				<DropdownMenu.Trigger class={buttonVariants({ size: "icon", variant: "ghost" })}>
 					<EllipsisVertical class="size-4" />
 					<span class="sr-only">Post options</span>
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content>
-					<DropdownMenu.Item>
+					<DropdownMenu.Item href="/posts/{post.id}/edit">
 						<SquarePen class="mr-2 size-4" />
 						Edit
 					</DropdownMenu.Item>
@@ -87,15 +87,14 @@
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
 			<form use:enhance method="POST" action="?/deletePost&id={post.id}">
-				<Button class={buttonVariants({ variant: 'destructive' })} type="submit">
+				<Button class={buttonVariants({ variant: "destructive" })} type="submit">
 					Yes, delete.
 				</Button>
 			</form>
 			<AlertDialog.Cancel
-				class={buttonVariants({ variant: 'outline' })}
+				class={buttonVariants({ variant: "outline" })}
 				onclick={() => (openStates.deleteDialogOpen = false)}>No, cancel.</AlertDialog.Cancel
 			>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
-

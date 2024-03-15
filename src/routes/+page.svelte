@@ -1,6 +1,6 @@
 <script lang="ts">
-	import CreatePostDialog from '$lib/components/create-post-dialog.svelte';
-	import PostCard from '$lib/components/post-card.svelte';
+	import CreatePostDialog from "$lib/components/create-post-dialog.svelte";
+	import PostCard from "$lib/components/post-card.svelte";
 
 	let { data } = $props();
 </script>
@@ -15,8 +15,7 @@
 	{/if}
 	<div class="flex flex-col gap-2">
 		{#each data.posts as post (post.id)}
-			<PostCard {post} form={data.deletePostForm}/>
+			<PostCard {post} form={data.deletePostForm} />
 		{/each}
 	</div>
-
 </div>

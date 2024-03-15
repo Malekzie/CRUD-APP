@@ -1,20 +1,20 @@
 <script lang="ts">
-	import * as Form from '$lib/components/ui/form/index.js';
-	import Input from '$lib/components/ui/input/input.svelte';
-	import { loginSchema } from '$lib/zod-schema.js';
-	import { superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
+	import * as Form from "$lib/components/ui/form/index.js";
+	import Input from "$lib/components/ui/input/input.svelte";
+	import { loginSchema } from "$lib/zod-schema.js";
+	import { superForm } from "sveltekit-superforms";
+	import { zodClient } from "sveltekit-superforms/adapters";
 
 	let { data } = $props();
 
 	const form = superForm(data.form, {
-		validators: zodClient(loginSchema)
+		validators: zodClient(loginSchema),
 	});
 
 	const { form: formData, enhance, errors } = form;
 </script>
 
-<div class="flex max-w-xl pt-8 mx-auto">
+<div class="mx-auto flex max-w-xl pt-8">
 	<form method="POST" use:enhance class="w-full space-y-4">
 		<Form.Field {form} name="username">
 			<Form.Control let:attrs>
@@ -30,7 +30,7 @@
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
-		<Form.Errors errors={$errors._errors}/>
+		<Form.Errors errors={$errors._errors} />
 		<Form.Button>Login</Form.Button>
 	</form>
 </div>

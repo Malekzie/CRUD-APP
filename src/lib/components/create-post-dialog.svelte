@@ -1,15 +1,14 @@
 <script lang="ts">
-	import * as Dialog from '$lib/components/ui/dialog';
-	import * as Form from '$lib/components/ui/form';
-	import { Input } from '$lib/components/ui/input';
-	import { Textarea } from '$lib/components/ui/textarea';
-	import type { Infer, SuperValidated } from 'sveltekit-superforms';
-	import { buttonVariants } from './ui/button';
-	import { createPostSchema } from '$lib/zod-schema';
-	import { superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
-     import { toast } from 'svelte-sonner';
-
+	import * as Dialog from "$lib/components/ui/dialog";
+	import * as Form from "$lib/components/ui/form";
+	import { Input } from "$lib/components/ui/input";
+	import { Textarea } from "$lib/components/ui/textarea";
+	import type { Infer, SuperValidated } from "sveltekit-superforms";
+	import { buttonVariants } from "./ui/button";
+	import { createPostSchema } from "$lib/zod-schema";
+	import { superForm } from "sveltekit-superforms";
+	import { zodClient } from "sveltekit-superforms/adapters";
+	import { toast } from "svelte-sonner";
 
 	type Props = {
 		form: SuperValidated<Infer<typeof createPostSchema>>;
@@ -17,18 +16,18 @@
 
 	let { form: theForm } = $props<Props>();
 
-     let open  = $state(false);
+	let open = $state(false);
 
 	const form = superForm(theForm, {
 		validators: zodClient(createPostSchema),
-          onUpdated: ({ form: updForm,  }) => {
-               if (!updForm.valid) return
+		onUpdated: ({ form: updForm }) => {
+			if (!updForm.valid) return;
 
-               // Success, show Toast n close dialog
+			// Success, show Toast n close dialog
 
-               toast.success('Post created successfully');
+			toast.success("Post created successfully");
 			open = false;
-          }
+		},
 	});
 
 	const { form: createPostFormData, enhance } = form;
