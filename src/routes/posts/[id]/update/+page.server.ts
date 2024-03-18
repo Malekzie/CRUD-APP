@@ -34,8 +34,8 @@ export const load: PageServerLoad = async (event) => {
 	const updatePostForm = await superValidate(event, zod(updatePostSchema));
 
 	return {
-		post,
 		updatePostForm,
+		postId
 	};
 };
 

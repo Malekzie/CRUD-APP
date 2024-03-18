@@ -5,7 +5,7 @@
 	let { data } = $props();
 </script>
 
-<div class="container">
+<div class="container max-w-xl">
 	{#if data.session}
 		<CreatePostDialog form={data.createPostForm} />
 	{:else}

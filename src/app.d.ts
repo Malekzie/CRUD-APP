@@ -1,6 +1,8 @@
 // See https://kit.svelte.dev/docs/types#app
 
-import type { SuperValidated } from "sveltekit-superforms";
+import type { Infer, SuperValidated } from "sveltekit-superforms";
+import { updatePostSchema } from "$lib/zod-schema";
+import type { Post } from "$lib/server/schemas";
 
 // for information about these interfaces
 declare global {
@@ -16,7 +18,11 @@ declare global {
 		}
 		interface PageState {
 			updatePost: {
-				form: SuperValidated<Infer<updatePostSchema>>;
+				data: {
+					updatePostForm: SuperValidated<Infer<Required<typeof updatePostSchema>>>;
+					postId: string;
+				};
+				dialog: boolean;
 			};
 		}
 		// interface Platform {}

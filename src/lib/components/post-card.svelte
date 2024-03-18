@@ -1,4 +1,5 @@
 <script lang="ts">
+     import UpdatePostPage from '../../routes/posts/[id]/update/+page.svelte';
 	import * as Card from "$lib/components/ui/card";
 	import * as AlertDialog from "$lib/components/ui/alert-dialog";
 	import { Button } from "$lib/components/ui/button";
@@ -6,16 +7,17 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import { EllipsisVertical, Trash2, SquarePen, Square } from "lucide-svelte";
 	import { buttonVariants } from "./ui/button";
-	import { type SuperValidated, type Infer, superForm } from "sveltekit-superforms";
+	import SuperDebug, { type SuperValidated, type Infer, superForm } from "sveltekit-superforms";
 	import { deletePostSchema } from "$lib/zod-schema";
 	import { zodClient } from "sveltekit-superforms/adapters";
 	import { sleep } from "$lib/utils.js";
 	import { toast } from "svelte-sonner";
 	import { page } from "$app/stores";
+	import { goto, preloadData, pushState } from '$app/navigation';
 
 	type Props = {
-		post: PostWithUser;
 		form: SuperValidated<Infer<typeof deletePostSchema>>;
+		post: PostWithUser;
 	};
 	let { post, form: theForm } = $props<Props>();
 
@@ -23,7 +25,9 @@
 		validators: zodClient(deletePostSchema),
 		onUpdated: ({ form: returnForm }) => {
 			if (!returnForm.valid) return toast.error("Error deleting your post!");
+
 			openStates.deleteDialogOpen = false;
+
 			toast.success("Post deleted successfully!");
 		},
 	});
@@ -35,6 +39,39 @@
 		dropdownOpen: false,
 		editDialogOpen: false,
 	});
+
+
+
+	async function handleEditLinkClick(event: MouseEvent) {
+		// @ts-expect-error
+		const e = event.detail.originalEvent as MouseEvent;
+
+
+		if (e.ctrlKey || e.metaKey) return;
+		const currentTarget = e.currentTarget;
+
+
+		if (!(currentTarget instanceof HTMLAnchorElement)) return;
+		e.preventDefault();
+
+		
+		const { href } = currentTarget;
+		const result = await preloadData(href);
+
+		if (result.type === 'loaded' && result.status === 200) {
+			pushState(href, {
+				updatePost: {
+					data: {
+						updatePostForm: result.data.updatePostForm,
+						postId: result.data.postId,
+					},
+					dialog: true,
+				}
+			})
+		} else {
+			goto(href);
+		}
+	}
 
 	$page;
 </script>
@@ -51,7 +88,7 @@
 					<span class="sr-only">Post options</span>
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content>
-					<DropdownMenu.Item href="/posts/{post.id}/edit">
+					<DropdownMenu.Item href="/posts/{post.id}/update" on:click={handleEditLinkClick}>
 						<SquarePen class="mr-2 size-4" />
 						Edit
 					</DropdownMenu.Item>
@@ -78,6 +115,16 @@
 		{post.user.username}
 	</Card.Footer>
 </Card.Root>
+<SuperDebug data={$page.state}/>
+
+{#if $page.state.updatePost?.dialog && $page.state.updatePost.data.postId === post.id}
+{@const data = {
+	...$page.state.updatePost.data,
+	user: $page.data.user,
+	session: $page.data.session
+}}
+	<UpdatePostPage {data} dialog={$page.state.updatePost.dialog}/>
+{/if}
 
 <AlertDialog.Root bind:open={openStates.deleteDialogOpen}>
 	<AlertDialog.Content>

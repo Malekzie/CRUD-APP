@@ -19,7 +19,7 @@
 
 	let { data, dialog = false } = $props<Props>();
 
-	let dialogOpen = $state(false);
+	let dialogOpen = $state(true);
 
 	const form = superForm(data.updatePostForm, {
 		validators: zodClient(updatePostSchema),
@@ -28,10 +28,9 @@
 
 			// Success, show Toast n close dialog
 
-			toast.success("Post created successfully");
+			toast.success("Post updated successfully");
 			//close dialog
-
-			if (dialog && dialogOpen) dialogOpen = false;
+			if (dialog) dialogOpen = false;
 		},
 		resetForm: false,
 	});
@@ -60,7 +59,12 @@
 
 {#if dialog}
 	<!-- Will show as a dialog instead of a full page -->
-	<Dialog.Root bind:open={dialogOpen}>
+	<Dialog.Root
+		bind:open={dialogOpen}
+		onOpenChange={(o) => {
+			if (!o) history.back();
+		}}
+	>
 		<Dialog.Content>
 			<Dialog.Header>
 				<Dialog.Title>Edit Post</Dialog.Title>
@@ -70,7 +74,7 @@
 	</Dialog.Root>
 {:else}
 	<!-- Will show if user clicks on post, then it becomes a page -->
-	<div class="container mx-auto max-w-xl">
+	<div class="container max-w-xl mx-auto">
 		<Card.Root>
 			<Card.Header>
 				<Card.Title>Update Post</Card.Title>
